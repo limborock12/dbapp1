@@ -34,7 +34,8 @@ public class Main {
 
             switch (recordChoice) {
               case 1:
-                // Call the method to manage product records
+                product p = new product();
+		            while (p.process() != 5) {}
                 break;
               case 2:
                 // Call the method to manage customer records
@@ -69,7 +70,8 @@ public class Main {
 
             switch (transactionChoice) {
               case 1:
-                // Call the method to handle orders
+                order o = new order();
+		            while (o.process()!= 5) {}
                 break;
               case 2:
                 // Call the method to handle payments
