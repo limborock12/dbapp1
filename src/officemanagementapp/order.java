@@ -1,5 +1,5 @@
 
-package dbsales;
+package DBapp;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.util.Scanner;

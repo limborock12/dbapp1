@@ -2,7 +2,7 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
  * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Main.java to edit this template
  */
-package officemanagementapp;
+package DBapp;
 
 /**
  *
@@ -173,7 +173,7 @@ public class OfficeManagementApp {
         }
     }
 
-    public static void main(String[] args) {
+    public static void main() {
          OfficeManagementApp app = new OfficeManagementApp();
         Scanner scanner = new Scanner(System.in);
         int choice;
@@ -276,6 +276,7 @@ public class OfficeManagementApp {
                     break;
                 case 6:
                     System.out.println("Exiting...");
+                    Main.main(new String[0]);
                     break;
                 default:
                     System.out.println("Invalid choice. Please enter a number between 1 and 5.");
