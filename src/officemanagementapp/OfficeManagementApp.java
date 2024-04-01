@@ -50,25 +50,39 @@ public class OfficeManagementApp {
 
     public int updateOffice(String officeCode, String newCity, String newPhone, String newAddressLine1, String newAddressLine2, String newState, String newCountry, String newPostalCode, String newTerritory) {
     try {
+       
         PreparedStatement selectStmt = conn.prepareStatement("SELECT * FROM offices WHERE officeCode = ?");
         selectStmt.setString(1, officeCode);
         ResultSet rs = selectStmt.executeQuery();
 
         if (rs.next()) {
-            String prevCountry = rs.getString("country");
             String prevCity = rs.getString("city");
             String prevPhone = rs.getString("phone");
+            String prevAddressLine1 = rs.getString("addressLine1");
+            String prevAddressLine2 = rs.getString("addressLine2");
+            String prevState = rs.getString("state");
+            String prevCountry = rs.getString("country");
+            String prevPostalCode = rs.getString("postalCode");
+            String prevTerritory = rs.getString("territory");
 
+            
             System.out.println("Old Office Information:");
-            System.out.println("Country: " + prevCountry);
             System.out.println("City: " + prevCity);
             System.out.println("Phone: " + prevPhone);
+            System.out.println("Address Line 1: " + prevAddressLine1);
+            System.out.println("Address Line 2: " + prevAddressLine2);
+            System.out.println("State: " + prevState);
+            System.out.println("Country: " + prevCountry);
+            System.out.println("Postal Code: " + prevPostalCode);
+            System.out.println("Territory: " + prevTerritory);
 
+            
             System.out.println("Do you want to update this office? (Y/N)");
             Scanner scanner = new Scanner(System.in);
             String confirmation = scanner.next();
 
             if (confirmation.equalsIgnoreCase("Y")) {
+                
                 PreparedStatement updateStmt = conn.prepareStatement("UPDATE offices SET city = ?, phone = ?, addressLine1 = ?, addressLine2 = ?, state = ?, country = ?, postalCode = ?, territory = ? WHERE officeCode = ?");
                 updateStmt.setString(1, newCity);
                 updateStmt.setString(2, newPhone);
