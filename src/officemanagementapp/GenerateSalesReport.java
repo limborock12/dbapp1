@@ -12,11 +12,13 @@ public class GenerateSalesReport {
             dbconnect db = new dbconnect();
             Connection conn = db.conn;
             
-            String sql = "SELECT productCode, orderDate, SUM(quantityOrdered * priceEach) AS totalSales " +
-                         "FROM orderdetails " +
-                         "JOIN orders ON orderdetails.orderNumber = orders.orderNumber " +
-                         "WHERE YEAR(orderDate) = ? AND MONTH(orderDate) = ? " +
-                         "GROUP BY productCode, orderDate";
+            String sql = "SELECT od.productCode, p.productName, o.orderDate, SUM(od.quantityOrdered * od.priceEach) AS totalSales " +
+                     "FROM orderdetails od " +
+                     "JOIN orders o ON od.orderNumber = o.orderNumber " +
+                     "JOIN products p ON od.productCode = p.productCode " +
+                     "WHERE YEAR(o.orderDate) = ? AND MONTH(o.orderDate) = ? " +
+                     "GROUP BY od.productCode, p.productName, o.orderDate";
+
 
             PreparedStatement pstmt = conn.prepareStatement(sql);
             pstmt.setInt(1, year);
@@ -25,7 +27,7 @@ public class GenerateSalesReport {
 
             System.out.println("Sales Report for " + year + "-" + month);
             System.out.println("-----------------------------------------------------");
-            System.out.println("Product Code\tOrder Date\tTotal Sales");
+            System.out.println("Product Code\tProduct Name\tOrder Date\tTotal Sales");
             System.out.println("-----------------------------------------------------");
 
             double totalSales = 0;
@@ -34,9 +36,10 @@ public class GenerateSalesReport {
                 String productCode = rs.getString("productCode");
                 String orderDate = rs.getString("orderDate");
                 double salesAmount = rs.getDouble("totalSales");
+                String productName = rs.getString("productName");
 
-                System.out.printf("%-15s\t%-10s\t$%.2f\n", productCode, orderDate, salesAmount);
-                totalSales += salesAmount;
+                 System.out.printf("%-15s\t%-15s\t%-10s\t$%.2f\n", productCode, productName, orderDate, salesAmount);
+            totalSales += salesAmount;
             }
 
             System.out.println("-----------------------------------------------------");

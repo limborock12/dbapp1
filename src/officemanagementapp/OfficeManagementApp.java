@@ -49,18 +49,26 @@ public class OfficeManagementApp {
     }
 
     public int updateOffice(String officeCode, String newCity, String newPhone, String newAddressLine1, String newAddressLine2, String newState, String newCountry, String newPostalCode, String newTerritory) {
-        try {
-            
-            PreparedStatement selectStmt = conn.prepareStatement("SELECT * FROM offices WHERE officeCode = ?");
-            selectStmt.setString(1, officeCode);
-            ResultSet rs = selectStmt.executeQuery();
+    try {
+        PreparedStatement selectStmt = conn.prepareStatement("SELECT * FROM offices WHERE officeCode = ?");
+        selectStmt.setString(1, officeCode);
+        ResultSet rs = selectStmt.executeQuery();
 
-            if (rs.next()) {
-                System.out.println("Old Office Information:");
-                System.out.println("City: " + rs.getString("city"));
-                
+        if (rs.next()) {
+            String prevCountry = rs.getString("country");
+            String prevCity = rs.getString("city");
+            String prevPhone = rs.getString("phone");
 
-                
+            System.out.println("Old Office Information:");
+            System.out.println("Country: " + prevCountry);
+            System.out.println("City: " + prevCity);
+            System.out.println("Phone: " + prevPhone);
+
+            System.out.println("Do you want to update this office? (Y/N)");
+            Scanner scanner = new Scanner(System.in);
+            String confirmation = scanner.next();
+
+            if (confirmation.equalsIgnoreCase("Y")) {
                 PreparedStatement updateStmt = conn.prepareStatement("UPDATE offices SET city = ?, phone = ?, addressLine1 = ?, addressLine2 = ?, state = ?, country = ?, postalCode = ?, territory = ? WHERE officeCode = ?");
                 updateStmt.setString(1, newCity);
                 updateStmt.setString(2, newPhone);
@@ -73,35 +81,56 @@ public class OfficeManagementApp {
                 updateStmt.setString(9, officeCode);
                 return updateStmt.executeUpdate();
             } else {
-                System.out.println("Office not found.");
+                System.out.println("Update operation cancelled.");
                 return 0;
             }
-        } catch (SQLException e) {
-            e.printStackTrace();
+        } else {
+            System.out.println("Office not found.");
             return 0;
         }
+    } catch (SQLException e) {
+        e.printStackTrace();
+        return 0;
     }
+}
 
-    public int deleteOffice(String officeCode) {
-        try {
-            
-            PreparedStatement checkStmt = conn.prepareStatement("SELECT COUNT(*) FROM employees WHERE officeCode = ?");
-            checkStmt.setString(1, officeCode);
-            ResultSet rs = checkStmt.executeQuery();
-            if (rs.next() && rs.getInt(1) > 0) {
-                System.out.println("Error: Cannot delete office because it is referenced by employees.");
+  public int deleteOffice(String officeCode) {
+    try {
+        PreparedStatement selectStmt = conn.prepareStatement("SELECT * FROM offices WHERE officeCode = ?");
+        selectStmt.setString(1, officeCode);
+        ResultSet rs = selectStmt.executeQuery();
+
+        if (rs.next()) {
+            String prevCountry = rs.getString("country");
+            String prevCity = rs.getString("city");
+            String prevPhone = rs.getString("phone");
+
+            System.out.println("Office Information:");
+            System.out.println("Country: " + prevCountry);
+            System.out.println("City: " + prevCity);
+            System.out.println("Phone: " + prevPhone);
+
+            System.out.println("Do you want to delete this office? (Y/N)");
+            Scanner scanner = new Scanner(System.in);
+            String confirmation = scanner.next();
+
+            if (confirmation.equalsIgnoreCase("Y")) {
+                PreparedStatement deleteStmt = conn.prepareStatement("DELETE FROM offices WHERE officeCode = ?");
+                deleteStmt.setString(1, officeCode);
+                return deleteStmt.executeUpdate();
+            } else {
+                System.out.println("Deletion operation cancelled.");
                 return 0;
             }
-
-            
-            PreparedStatement deleteStmt = conn.prepareStatement("DELETE FROM offices WHERE officeCode = ?");
-            deleteStmt.setString(1, officeCode);
-            return deleteStmt.executeUpdate();
-        } catch (SQLException e) {
-            e.printStackTrace();
+        } else {
+            System.out.println("Office not found.");
             return 0;
         }
+    } catch (SQLException e) {
+        e.printStackTrace();
+        return 0;
     }
+}
 
     public void viewOffice(String officeCode) {
         try {
@@ -131,47 +160,45 @@ public class OfficeManagementApp {
     }
     
     public void generateSalesReport(int year, int month) {
-        try {
-            
-            String sql = "SELECT productCode, orderDate, SUM(quantityOrdered * priceEach) AS totalSales " +
-                         "FROM orderdetails " +
-                         "JOIN orders ON orderdetails.orderNumber = orders.orderNumber " +
-                         "WHERE YEAR(orderDate) = ? AND MONTH(orderDate) = ? " +
-                         "GROUP BY productCode, orderDate";
+    try {
+        String sql = "SELECT od.productCode, p.productName, o.orderDate, SUM(od.quantityOrdered * od.priceEach) AS totalSales " +
+                     "FROM orderdetails od " +
+                     "JOIN orders o ON od.orderNumber = o.orderNumber " +
+                     "JOIN products p ON od.productCode = p.productCode " +
+                     "WHERE YEAR(o.orderDate) = ? AND MONTH(o.orderDate) = ? " +
+                     "GROUP BY od.productCode, p.productName, o.orderDate";
 
-            PreparedStatement pstmt = conn.prepareStatement(sql);
-            pstmt.setInt(1, year);
-            pstmt.setInt(2, month);
-            ResultSet rs = pstmt.executeQuery();
+        PreparedStatement pstmt = conn.prepareStatement(sql);
+        pstmt.setInt(1, year);
+        pstmt.setInt(2, month);
+        ResultSet rs = pstmt.executeQuery();
 
-            
-            System.out.println("Sales Report for " + year + "-" + month);
-            System.out.println("-----------------------------------------------------");
-            System.out.println("Product Code\tOrder Date\tTotal Sales");
-            System.out.println("-----------------------------------------------------");
+        System.out.println("Sales Report for " + year + "-" + month);
+        System.out.println("-----------------------------------------------------");
+        System.out.println("Product Code\tProduct Name\tOrder Date\tTotal Sales");
+        System.out.println("-----------------------------------------------------");
 
-            double totalSales = 0;
+        double totalSales = 0;
 
-            
-            while (rs.next()) {
-                String productCode = rs.getString("productCode");
-                String orderDate = rs.getString("orderDate");
-                double salesAmount = rs.getDouble("totalSales");
+        while (rs.next()) {
+            String productCode = rs.getString("productCode");
+            String productName = rs.getString("productName");
+            String orderDate = rs.getString("orderDate");
+            double salesAmount = rs.getDouble("totalSales");
 
-                System.out.printf("%-15s\t%-10s\t$%.2f\n", productCode, orderDate, salesAmount);
-                totalSales += salesAmount;
-            }
-
-            
-            System.out.println("-----------------------------------------------------");
-            System.out.printf("Total Sales: $%.2f\n", totalSales);
-            System.out.println("-----------------------------------------------------");
-
-            pstmt.close();
-        } catch (SQLException e) {
-            e.printStackTrace();
+            System.out.printf("%-15s\t%-15s\t%-10s\t$%.2f\n", productCode, productName, orderDate, salesAmount);
+            totalSales += salesAmount;
         }
+
+        System.out.println("-----------------------------------------------------");
+        System.out.printf("Total Sales: $%.2f\n", totalSales);
+        System.out.println("-----------------------------------------------------");
+
+        pstmt.close();
+    } catch (SQLException e) {
+        e.printStackTrace();
     }
+}
 
     public static void main() {
          OfficeManagementApp app = new OfficeManagementApp();
