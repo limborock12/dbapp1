@@ -40,7 +40,8 @@ public class Main {
                 // Call the method to manage customer records
                 break;
               case 3:
-                // Call the method to manage employee records
+                  employees e = new employees();
+                  e.function();
                 break;
               case 4:
                 // Call the method to manage office records
@@ -96,7 +97,8 @@ public class Main {
 
             switch (reportChoice) {
               case 1:
-                // Call the method to generate sales report per status
+                SalesReport1 sr = new SalesReport1();
+                sr.function();
                 break;
               case 2:
                 // Call the method to generate sales report per product
