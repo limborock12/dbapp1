@@ -45,7 +45,7 @@ public class product {
 			System.out.println("Press ENTER to ADD");
 			scanner.nextLine();
 				
-			dbconnection db = new dbconnection();	
+			dbconnect db = new dbconnect();	
 			
 			statement = db.conn.prepareStatement("INSERT INTO products (productCode, productName, productLine, productScale, productVendor, productDescription, quantityInStock, buyPrice, MSRP) VALUES (?,?,?,?,?,?,?,?,?)");
 			
@@ -89,7 +89,7 @@ public class product {
 			System.out.println("Press ENTER to UPDATE");
 			scanner.nextLine();
 			
-			dbconnection db = new dbconnection();		
+			dbconnect db = new dbconnect();		
 			
 			statement = db.conn.prepareStatement("UPDATE products SET productName=?, productLine=?, productScale=?, productVendor=?, productDescription=?, quantityInStock=?, buyPrice=?, MSRP=? WHERE productCode=?");
 			
@@ -124,7 +124,7 @@ public class product {
 			System.out.println("Press ENTER to DELETE");
 			scanner.nextLine();
 		
-			dbconnection db = new dbconnection();			
+			dbconnect db = new dbconnect();			
 			
 			statement = db.conn.prepareStatement("DELETE FROM products WHERE productCode=?");
 			statement.setString(1, productCode);
@@ -158,7 +158,7 @@ public class product {
 				hasRecord = false;
 				System.out.println("Retrieving the record of Product: " + productCode +" in Year: " + year);
 			
-				dbconnection db = new dbconnection();			
+				dbconnect db = new dbconnect();			
 				
 				statement = db.conn.prepareStatement(query);
 				
@@ -205,7 +205,7 @@ public class product {
 		try {
 			
 			hasRecord = false;
-			dbconnection db = new dbconnection();
+			dbconnect db = new dbconnect();
 			statement = db.conn.prepareStatement("SELECT * FROM products WHERE productCode = ?");
 			statement.setString(1, code);
 			rset = statement.executeQuery();
