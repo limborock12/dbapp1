@@ -26,7 +26,7 @@ public class order {
 	}
 	
 	public void getProductName(String code) {
-		dbconnection db = new dbconnection();
+		dbconnect db = new dbconnect();
 		PreparedStatement statement;
 		ResultSet rset;					
 		
@@ -56,7 +56,7 @@ public class order {
 	}
 	
 	public void inputOrderDetails() {
-		dbconnection db = new dbconnection();
+		dbconnect db = new dbconnect();
 		PreparedStatement detailsstatement;
 		ResultSet rset;	
 		Scanner scanner = new Scanner(System.in);
@@ -178,7 +178,7 @@ public class order {
 	}
 	
 	public void updateOrder(){
-		dbconnection db = new dbconnection();
+		dbconnect db = new dbconnect();
 		ResultSet rset;	
 		PreparedStatement statement;
 		Scanner scanner = new Scanner(System.in);
@@ -279,7 +279,7 @@ public class order {
 	
 	public void updateProduct(){
 		
-		dbconnection db = new dbconnection();
+		dbconnect db = new dbconnect();
 		ResultSet rset;	
 		PreparedStatement statement;
 		Scanner scanner = new Scanner(System.in);
@@ -358,7 +358,7 @@ public class order {
 	
 public void deleteProduct(){
 		
-		dbconnection db = new dbconnection();
+		dbconnect db = new dbconnect();
 		ResultSet rset;	
 		PreparedStatement statement;
 		Scanner scanner = new Scanner(System.in);
