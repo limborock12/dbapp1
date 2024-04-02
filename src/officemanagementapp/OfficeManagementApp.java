@@ -147,31 +147,46 @@ public class OfficeManagementApp {
 }
 
     public void viewOffice(String officeCode) {
-        try {
-            PreparedStatement pstmt = conn.prepareStatement("SELECT * FROM offices WHERE officeCode = ?");
-            pstmt.setString(1, officeCode);
-            ResultSet rs = pstmt.executeQuery();
+    try {
+        // Query to fetch office information
+        PreparedStatement pstmtOffice = conn.prepareStatement("SELECT * FROM offices WHERE officeCode = ?");
+        pstmtOffice.setString(1, officeCode);
+        ResultSet rsOffice = pstmtOffice.executeQuery();
 
-            // Display office information
-            if (rs.next()) {
-                System.out.println("Office Information:");
-                System.out.println("Office Code: " + rs.getString("officeCode"));
-                System.out.println("City: " + rs.getString("city"));
-                System.out.println("Phone: " + rs.getString("phone"));
-                System.out.println("Address Line 1: " + rs.getString("addressLine1"));
-                System.out.println("Address Line 2: " + rs.getString("addressLine2"));
-                System.out.println("State: " + rs.getString("state"));
-                System.out.println("Country: " + rs.getString("country"));
-                System.out.println("Postal Code: " + rs.getString("postalCode"));
-                System.out.println("Territory: " + rs.getString("territory"));
-                
-            } else {
-                System.out.println("Office not found.");
+        // Display office information
+        if (rsOffice.next()) {
+            System.out.println("Office Information:");
+            System.out.println("Office Code: " + rsOffice.getString("officeCode"));
+            System.out.println("City: " + rsOffice.getString("city"));
+            System.out.println("Phone: " + rsOffice.getString("phone"));
+            System.out.println("Address Line 1: " + rsOffice.getString("addressLine1"));
+            System.out.println("Address Line 2: " + rsOffice.getString("addressLine2"));
+            System.out.println("State: " + rsOffice.getString("state"));
+            System.out.println("Country: " + rsOffice.getString("country"));
+            System.out.println("Postal Code: " + rsOffice.getString("postalCode"));
+            System.out.println("Territory: " + rsOffice.getString("territory"));
+
+            
+            PreparedStatement pstmtEmployees = conn.prepareStatement("SELECT * FROM employees WHERE officeCode = ?");
+            pstmtEmployees.setString(1, officeCode);
+            ResultSet rsEmployees = pstmtEmployees.executeQuery();
+
+            
+            System.out.println("\nEmployees Assigned to this Office:");
+            while (rsEmployees.next()) {
+                System.out.println("Employee Number: " + rsEmployees.getString("employeeNumber"));
+                System.out.println("Last Name: " + rsEmployees.getString("lastName"));
+                System.out.println("First Name: " + rsEmployees.getString("firstName"));
+                System.out.println("Job Title: " + rsEmployees.getString("jobTitle"));
+                System.out.println();
             }
-        } catch (SQLException e) {
-            e.printStackTrace();
+        } else {
+            System.out.println("Office not found.");
         }
+    } catch (SQLException e) {
+        e.printStackTrace();
     }
+}
     
     public void generateSalesReport(int year, int month) {
     try {
